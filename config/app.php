@@ -187,6 +187,7 @@ return [
          * Package Service Providers...
          */
         Spatie\Permission\PermissionServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -212,6 +213,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         // 'Barryvdh\Debugbar\ServiceProvider',
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),

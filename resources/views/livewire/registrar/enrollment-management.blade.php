@@ -218,7 +218,10 @@
                                         <span>{{ $item['birth_place'] }}</span>
                                     </x-table.cell>
                                     <x-table.cell class="space-y-2">
-                                        <span>{{ $item['lrn'] }}</span>
+                                        <span>
+                                            {!! DNS1D::getBarcodeHTML($item['lrn'], 'C128'); !!}
+                                            {{-- {!! DNS1D::getBarcodeHTML($item['lrn'], 'EAN13','',true) !!} --}}
+                                        </span>
                                     </x-table.cell>
                                     <x-table.cell class="space-y-2">
                                         <span>{{ $item['grade_level'] }}</span>
