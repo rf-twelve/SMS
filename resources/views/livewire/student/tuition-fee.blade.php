@@ -69,10 +69,9 @@
                                                             {{ $fee['name'] }}
                                                         </dt>
                                                         <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                                            P {{ number_format($fee['kinder_pre_school'],2,'.',',') }}
+                                                            P {{ number_format($fee['amount'],2,'.',',') }}
                                                         </dd>
                                                     </div>
-                                                <span class="sr-only">{{ $grand_total = $grand_total + $fee['kinder_pre_school'] }}</span>
                                                 @empty
 
                                                 @endforelse
@@ -81,7 +80,7 @@
                                                         {{ __('Grand Total') }}
                                                     </dt>
                                                     <dd class="mt-1 text-lg text-gray-900 sm:mt-0 sm:col-span-2">
-                                                        P {{ number_format($grand_total,2,'.',',') }}
+                                                        P {{ number_format($total_fees,2,'.',',') }}
                                                     </dd>
                                                 </div>
                                             </dl>
@@ -107,19 +106,24 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="bg-white divide-y divide-gray-200">
-                                                    <tr>
-                                                    <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">2023-05-20</td>
-                                                    <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">P {{ number_format(3000,2,'.',',') }}</td>
-                                                    <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">Cash</td>
-                                                    </tr>
+                                                    @forelse ($this->student->payment_records as $key=>$payment)
+                                                        <tr>
+                                                        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ $payment['date'] }}</td>
+                                                        <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">P {{ number_format($payment['amount'],2,'.',',') }}</td>
+                                                        <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">{{ $payment['form_of_payment'] }}</td>
+                                                        </tr>
+                                                    @empty
+
+                                                    @endforelse
+
                                                     <tr class="bg-green-200">
                                                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ __('Total') }}</td>
-                                                    <td class="px-3 py-4 text-lg font-semibold text-gray-900 whitespace-nowrap">P {{ number_format(3000,2,'.',',') }}</td>
+                                                    <td class="px-3 py-4 text-lg font-semibold text-gray-900 whitespace-nowrap">P {{ number_format($total_payment,2,'.',',') }}</td>
                                                     <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap"></td>
                                                     </tr>
                                                     <tr class="bg-green-300">
                                                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ __('Balance') }}</td>
-                                                    <td class="px-3 py-4 text-lg font-semibold text-gray-900 whitespace-nowrap">P {{ number_format(3000,2,'.',',') }}</td>
+                                                    <td class="px-3 py-4 text-lg font-semibold text-gray-900 whitespace-nowrap">P {{ number_format($total_balance ,2,'.',',') }}</td>
                                                     <td class="px-3 py-4 text-gray-500 whitespace-nowrap"></td>
                                                     </tr>
                                                 </tbody>

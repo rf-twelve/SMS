@@ -30,6 +30,18 @@ class UsersManagement extends Component
     // public $permission_name;
     public $action_array = ['create','read','update','delete','access'];
 
+    public $users;
+    public $user_selected;
+    public $roles;
+
+    public function userSelect($id){
+        $this->user_selected = $this->users->find($id);
+        $this->role_name = $this->user_selected->getRoleNames()->first();
+        // dd($this->user_selected->getRoleNames()->first());
+    }
+
+
+
     public function render()
     {
         // dd(User::ACTIONS);
@@ -41,14 +53,25 @@ class UsersManagement extends Component
     }
 
     public function mount(){
+        $this->users = User::with('roles')->get();
+        $this->roles = Role::get();
+        $this->user_selected = null;
+
+
         $this->all_users =  User::where('fullname','LIKE','%'."Ad".'%')->get();
-        $this->all_roles =  Role::get();
+        // $this->all_roles =  Role::get();
         // $this->all_permissions =  User::get();
         $this->addRoleModal = false;
         $this->addPermissionModal = false;
         $this->assign_role_confirmation = false;
         $this->assign_permission_confirmation = false;
         $this->selectedUser(($this->all_users->first())['id']);
+    }
+
+    public function rolesSelected($name){
+        $this->role_name = $name;
+        $this->user_selected->syncRoles($name);
+        $this->notify('You\'ve updated role successfully.');
     }
 
     // public function updatedSearch(){
@@ -75,6 +98,10 @@ class UsersManagement extends Component
         }
         $this->user_role = $get_role;
         $this->user_permission = $get_permissions;
+    }
+
+    public function logout() {
+        auth()->logout(); return redirect('/');
     }
 
 }

@@ -11,7 +11,7 @@
                             src="{{ asset('img/users/avatar.png') }}" alt="User profile">
                         <span class="flex flex-col flex-1 min-w-0">
                             <span class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->fullname }}</span>
-                            <span class="text-sm text-gray-500 truncate">{{ Auth::user()->email }}</span>
+                            <span class="text-sm text-gray-500 truncate">{{ Auth::user()->getRoleNames()->first() }}</span>
                         </span>
                     </span>
                     <!-- Heroicon name: solid/selector -->
@@ -28,39 +28,21 @@
         {{-- PROFILE SETTINGS --}}
         <div x-show="userDropdown" @click.outside="userDropdown = false"
             class="absolute left-0 right-0 z-10 mx-3 mt-1 origin-top bg-white divide-y divide-gray-200 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu" aria-orientation="vertical" aria-labelledby="options-menu-button" tabindex="-1">
-            <div class="py-1" role="none">
+             aria-orientation="vertical" aria-labelledby="options-menu-button" tabindex="-1">
+            <div class="py-1" >
                 <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
                 <a onclick="window.open('{{ route('profile-settings',['user_id'=>Auth::user()->id]) }}','_blank')" href="#"
-                    class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                    class="block px-4 py-2 text-sm text-gray-700"  tabindex="-1"
                     id="options-menu-item-0">View profile</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700"  tabindex="-1"
                     id="options-menu-item-2">Notifications</a>
-                <a wire:click='logout()' href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"
+                <a wire:click='logout()' href="#" class="block px-4 py-2 text-sm text-gray-700" hasanyrole="menuitem" tabindex="-1"
                     id="options-menu-item-5">Logout</a>
             </div>
         </div>
     </div>
-    <!-- Sidebar Search -->
-    {{-- <div class="px-3 mt-5">
-        <label for="search" class="sr-only">Search</label>
-        <div class="relative mt-1 rounded-md shadow-sm">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" aria-hidden="true">
-                <!-- Heroicon name: solid/search -->
-                <svg class="w-4 h-4 mr-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clip-rule="evenodd" />
-                </svg>
-            </div>
-            <input type="text" name="search" id="search"
-                class="block w-full py-2 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-9 sm:text-sm"
-                placeholder="Searched">
-        </div>
-    </div> --}}
-    <!-- Navigation -->
-    <nav class="flex-1 px-2 space-y-1" aria-label="Sidebar">
+
+    <nav class="flex-1 px-2 space-y-1 uppercase" aria-label="Sidebar">
         <div>
             <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
             <a href="{{ route('user-dashboard',['user_id'=>Auth::user()->id]) }}"
@@ -70,181 +52,247 @@
             </a>
         </div>
 
+        {{-- ACCOUNTING SECTION --}}
+        @hasanyrole('Accounting|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
+                <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
+                <span class="flex-1"> ACCOUNTING</span>
+                <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
+                <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
+            </button>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Tuition Fee </span></a>
+                <a href="{{ route('guest/mission-and-vision',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Billing/Payment </span></a>
+                <a href="{{ route('guest/enrollment-steps',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Contribution </span></a>
+            </div>
+        </div>
+        @endhasanyrole
 
-        <div class="space-y-1">
-            <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-            <button type="button"
-                class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-controls="sub-menu-4" aria-expanded="false">
+        {{-- ADMIN SECTION --}}
+        @hasanyrole('admin|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
+                <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
+                <span class="flex-1"> ADMINISTRATION</span>
+                <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
+                <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
+            </button>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Student List </span></a>
+                <a href="{{ route('guest/mission-and-vision',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Faculty List </span></a>
+                <a href="{{ route('guest/enrollment-steps',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Teacher List </span></a>
+            </div>
+        </div>
+        @endhasanyrole
+
+        {{-- CASHIER SECTION --}}
+        @hasanyrole('Cashier|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-md font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
+                <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
+                <span class="flex-1"> CASHIER</span>
+                <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
+                <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
+            </button>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('cashier/payment-and-collection',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Payment & Collection </span></a>
+            </div>
+        </div>
+        @endhasanyrole
+
+        {{-- GUEST SECTION --}}
+        @hasanyrole('Guest|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-md font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
                 <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
                 <span class="flex-1"> GUEST PORTAL</span>
                 <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
                 <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
             </button>
-            <div class="space-y-1" id="sub-menu-4">
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
                 <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> School History </span></a>
                 <a href="{{ route('guest/mission-and-vision',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> Mission & Vision </span></a>
                 <a href="{{ route('guest/enrollment-steps',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> Enrollment Steps </span></a>
+                <a href="{{ route('guest/enrollment-steps',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Make Reservation </span></a>
+                <a href="{{ route('guest/enrollment-steps',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Entrance Exam </span></a>
             </div>
         </div>
-        <div class="space-y-1">
-            <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-            <button type="button"
-                class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-controls="sub-menu-4" aria-expanded="false">
+        @endhasanyrole
+
+        {{-- GUIDANCE AND ADMISSION SECTION --}}
+        @hasanyrole('Guidance|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-xs font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
                 <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
-                <span class="flex-1"> PARENT & STUDENT</span>
+                <span class="flex-1"> GUIDANCE & ADMISSION</span>
                 <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
                 <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
             </button>
-            <div class="space-y-1" id="sub-menu-4">
-                <a href="{{ route('student/student-profile',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Student Profile </span></a>
-
-                <a href="{{ route('student/academic-grades',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                <span class="flex-1"> Reservation/Appointments </span></a>
+            </div>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Academic Grades </span></a>
-
-                <a href="{{ route('student/tuition-fee',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
-                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Tuition Fee </span></a>
+                <span class="flex-1"> Reports </span></a>
             </div>
         </div>
+        @endhasanyrole
 
-        <div class="space-y-1">
-            <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-            <button type="button"
-                class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-controls="sub-menu-4" aria-expanded="false">
+        {{-- FACULTY STAFF SECTION --}}
+        @hasanyrole('Faculty|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-md font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
                 <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
-                <span class="flex-1"> FACULTY & STAFF</span>
+                <span class="flex-1"> FACULTY STAFF</span>
                 <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
                 <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
             </button>
-            <div class="space-y-1" id="sub-menu-4">
-                <a href="{{ route('faculty/faculty-profile',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('guest/school-history',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Faculty Profile </span></a>
-                <a href="{{ route('faculty/class-record',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                <span class="flex-1"> Profile </span></a>
+            </div>
+        </div>
+        @endhasanyrole
+
+        {{-- TEACHER SECTION --}}
+        @hasanyrole('Teacher|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-md font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
+                <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
+                <span class="flex-1"> TEACHER</span>
+                <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
+                <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
+            </button>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('teacher/class-record',['user_id'=>Auth::user()->id]) }}" class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> Class Record </span></a>
-                <a href="{{ route('faculty/class-schedule',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+            </div>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('teacher/class-schedule',['user_id'=>Auth::user()->id]) }}" class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> Class Schedule </span></a>
-                <a href="{{ route('faculty/weekly-workload',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+            </div>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
+                <a href="{{ route('teacher/weekly-workload',['user_id'=>Auth::user()->id]) }}" class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-green-700 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> Weekly Workload </span></a>
             </div>
         </div>
-        <div class="space-y-1">
-            <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-            <button type="button"
-                class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-controls="sub-menu-4" aria-expanded="false">
+        @endhasanyrole
+
+        {{-- PARENT AND STUDENT SECTION --}}
+        @hasanyrole('Student|Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
                 <x-icon.document class="flex-shrink-0 w-6 h-6 mr-3" />
-                <span class="flex-1"> REGISTRAR </span>
-                <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
+                <span class="flex-1"> PARENT & STUDENT</span>
                 <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
             </button>
-            <!-- Expandable link section, show/hide based on state. -->
-            <div class="space-y-1" id="sub-menu-4">
-                <a href="{{ route('registrar/student-admission',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
-                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Student Admission </span></a>
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
 
-                <a href="{{ route('registrar/enrollment-management',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                <a href="{{ route('student/academic-grades',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Enrollment Mgt </span></a>
+                <span class="flex-1"> Academic Grades </span></a>
 
-                <a href="{{ route('registrar/enrollment-report',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                <a href="{{ route('student/attendance',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Enrollment Report </span></a>
+                <span class="flex-1"> Attendance </span></a>
 
-                <a href="{{ route('registrar/billing-and-payment',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                <a href="{{ route('student/statement-of-account',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
                     <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Billing & Payment </span></a>
+                <span class="flex-1"> Statemane of Account </span></a>
+
+                <a href="{{ route('student/student-profile',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Student Profile </span></a>
+
+                <a href="{{ route('student/tuition-fee',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
+                    <x-icon.folder-open class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Tuition Fee </span></a>
             </div>
         </div>
+        @endhasanyrole
 
-        <div class="space-y-1">
-            <!-- Current: "bg-gray-100 text-gray-900", Default: "bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900" -->
-            <button type="button"
-                class="flex items-center w-full py-2 pl-2 pr-1 text-sm font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                aria-controls="sub-menu-4" aria-expanded="false">
+        {{-- SETTINGS SECTION --}}
+        @hasanyrole('Super Admin')
+        <div x-data="{open:false}" class="space-y-1">
+            <button x-on:click="open =! open" type="button" class="flex items-center w-full py-2 pl-2 pr-1 text-md font-medium text-left text-green-700 bg-green-200 rounded-md hover:bg-gray-50 hover:text-gray-900 group focus:outline-none focus:ring-2 focus:ring-white">
                 <x-icon.settings class="flex-shrink-0 w-6 h-6 mr-3" />
                 <span class="flex-1"> SETTINGS </span>
                 <!-- Expanded: "text-gray-400 rotate-90", Collapsed: "text-gray-300" -->
                 <x-icon.arrow-head class="flex-shrink-0 w-5 h-5 ml-3 text-gray-300 transition-colors duration-150 ease-in-out transform rotate-90 group-hover:text-gray-400"/>
             </button>
             <!-- Expandable link section, show/hide based on state. -->
-            <div class="space-y-1" id="sub-menu-4">
+            <div x-show="open" class="space-y-1 text-xs font-medium text-green-100" id="sub-menu-4">
 
                 <a href="{{ route('user-management',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
                     <x-icon.users class="flex-shrink-0 w-5 h-5 mr-1"/>
                 <span class="flex-1"> User Management </span></a>
 
-            </div>
-            <div class="space-y-1" id="sub-menu-4">
+                <a href="{{ route('user-management',['user_id'=>Auth::user()->id]) }}"
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
+                    <x-icon.users class="flex-shrink-0 w-5 h-5 mr-1"/>
+                <span class="flex-1"> Role & Permission </span></a>
 
                 <a href="{{ route('company-profile',['user_id'=>Auth::user()->id]) }}"
-                    class="flex items-center w-full py-2 pr-2 text-sm font-medium text-blue-100 rounded-md group pl-11 hover:text-gray-900 hover:bg-gray-50">
+                    class="flex items-center w-full py-2 pr-2 rounded-md group pl-6 hover:text-gray-900 hover:bg-gray-50">
                     <x-icon.users class="flex-shrink-0 w-5 h-5 mr-1"/>
-                <span class="flex-1"> Company Profile </span></a>
+                <span class="flex-1"> System Config </span></a>
 
             </div>
         </div>
+        @endhasanyrole
 
-        {{-- <div class="mt-8 text-center bg-blue-100">
-            <!-- Secondary navigation -->
-            <h3 class="px-3 text-xs font-semibold tracking-wider text-gray-500 uppercase"
-                id="desktop-teams-headline">ZELEKTRONICA 2023 v2</h3>
-
-        </div> --}}
-        {{-- <div class="mt-8">
-            <!-- Secondary navigation -->
-            <h3 class="px-3 text-xs font-semibold tracking-wider text-gray-500 uppercase"
-                id="desktop-teams-headline">CONNECTION STATUS</h3>
-            <div class="mt-1 space-y-1" role="group" aria-labelledby="desktop-teams-headline">
-                <a href="#"
-                    class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md group hover:text-gray-900 hover:bg-gray-50">
-                    <span class="w-2.5 h-2.5 mr-4 bg-indigo-500 rounded-full" aria-hidden="true"></span>
-                    <span class="truncate"> Engineering </span>
-                </a>
-
-                <a href="#"
-                    class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md group hover:text-gray-900 hover:bg-gray-50">
-                    <span class="w-2.5 h-2.5 mr-4 bg-green-500 rounded-full" aria-hidden="true"></span>
-                    <span class="truncate"> Server: 192.168.82.6 </span>
-                </a>
-
-                <a href="#"
-                    class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md group hover:text-gray-900 hover:bg-gray-50">
-                    <span class="w-2.5 h-2.5 mr-4 bg-yellow-500 rounded-full" aria-hidden="true"></span>
-                    <span class="truncate"> Customer Success </span>
-                </a>
-            </div>
-        </div> --}}
     </nav>
 </div>

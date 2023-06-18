@@ -243,9 +243,9 @@
                         <x-slot name="content">
                             <div class="p-1 mb-4 space-y-3 overflow-y-auto max-h-96">
                                 <div class="space-y-1 sm:col-span-2">
-                                    <label for="payment_date" class="text-sm">DATE :</label>
-                                    <x-input wire:model.lazy="payment_date" id="payment_date" type="date"/>
-                                    @error('payment_date')<x-comment class="text-red-500">*{{ $message }}</x-comment>@enderror
+                                    <label for="date" class="text-sm">DATE :</label>
+                                    <x-input wire:model.lazy="date" id="date" type="date"/>
+                                    @error('date')<x-comment class="text-red-500">*{{ $message }}</x-comment>@enderror
                                 </div>
                                 <div class="space-y-1 sm:col-span-2">
                                     <label for="amount" class="text-sm">AMOUNT :</label>

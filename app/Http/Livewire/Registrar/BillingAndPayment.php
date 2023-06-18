@@ -17,7 +17,7 @@ class BillingAndPayment extends Component
     public $payment_records;
     public $student_id;
     public $student_lrn;
-    public $payment_date;
+    public $date;
     public $amount;
     public $form_of_payment;
     public $total;
@@ -44,13 +44,15 @@ class BillingAndPayment extends Component
     }
 
     public function updated($variable){
-        if($variable == 'scan_or_search'){
+        if($variable == 'scan_or_search' || $variable == 'amount'){
             $this->student = $this->searchRecord($this->scan_or_search);
             if(isset($this->student)){
                 $this->payment_records = $this->student->payment_records->toArray();
                 $this->total_tuition_fee = $this->getTotalTuitionFee();
             }
         }
+        // dd($variable);
+
     }
 
     public function openPaymentModal()
@@ -68,24 +70,22 @@ class BillingAndPayment extends Component
     public function saveRecord()
     {
         $valid = $this->validate([
-            'payment_date' => 'required',
+            'date' => 'required',
             'amount' => 'required',
             'form_of_payment' => 'required',
         ]);
 
-        $data = [
-            'student_id' => $this->student['id'],
-            'date' => $valid['payment_date'],
-            'amount' => $valid['amount'],
-            'form_of_payment' => $valid['form_of_payment'],
-        ];
+        // if ($this->payment_id) {
+        //     $model =  PaymentRecords::find($this->payment_id);
+        //     $model->update($data);
+        // } else {
+        //     $this->student::create($valid);
+        //     $this->student::updateOrCreate($valid);
+        // }
+        $this->student->payment_records()->create($valid);
 
-        isset($this->payment_id)
-            ? PaymentRecords::find($this->payment_id)->update($data)
-            : PaymentRecords::create($data);
-
-        // Arr::add($this->payment_records,Str::random(100),$data);
-        // dd($this->payment_records);
+        $this->student->refresh();
+        $this->payment_records = $this->student->payment_records->toArray();
         $this->notify('You\'ve save record successfully.');
         $this->showFormModal = false;
     }
@@ -99,7 +99,7 @@ class BillingAndPayment extends Component
     {
         $this->payment_id = $data['id'];
         $this->student_id = $data['student_id'];
-        $this->payment_date = $data['date'];
+        $this->date = $data['date'];
         $this->amount = $data['amount'];
         $this->form_of_payment = $data['form_of_payment'];
     }
@@ -108,7 +108,7 @@ class BillingAndPayment extends Component
     {
         $this->payment_id = null;
         $this->student_id = '';
-        $this->payment_date = date('Y-m-d');
+        $this->date = date('Y-m-d');
         $this->amount = '';
         $this->form_of_payment = '';
     }

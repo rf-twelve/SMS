@@ -53,20 +53,10 @@
                                 {{--MAINTENANCE LOG--}}
                                 <div class="p-4 space-y-6 divide-y divide-gray-200 sm:space-y-5">
                                         <h3 class="text-lg font-medium leading-6 text-gray-900">HOW TO ENROLL?</h3>
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                            Detailed information about the strandee.
-                                        </p>
+                                        <img src="{{ asset('img/users/enrollment1.png') }}" alt="photo"
+                                        class="object-cover object-center w-full p-2">
+                                        <img src="{{ asset('img/users/enrollment2.png') }}" alt="photo"
+                                        class="object-cover object-center w-full p-2">
                                 </div>
                             </div>
                         </div>

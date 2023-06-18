@@ -22,4 +22,5 @@ class Student extends Model
             ? Storage::disk('images')->url($this->image)
             : asset('img/users/avatar.png');
     }
+
 }
